@@ -196,10 +196,10 @@ def player_selection():
 
 if __name__ == "__main__":
     show_cover()
+    env = env(render_mode="god")
     while True:
         game_mode, player_idx = main_menu()
         
-        env = env(render_mode="god")
         agent = PPO(
             env=None,
             observation_space=(3,48,48),
