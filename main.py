@@ -12,6 +12,7 @@ hidden_state_shape = (1, 96, 256)
 n_agents = 8
 
 def run(self, env, player_idx, n_steps=100_000, **kwargs):
+    points = []
     cumulative_reward = 0
     obs, info = env.reset(player_idx)
     hidden_state_shape = list(self.hidden_state_shape)
@@ -41,9 +42,11 @@ def run(self, env, player_idx, n_steps=100_000, **kwargs):
         cumulative_reward += sum(reward)
         
         if done: break
+        points = env.points
         obs = new_obs
 
-    winner = ["diamond","club","spade","heart"][np.argmax(env.points)]
+    print(points)
+    winner = ["diamond","club","spade","heart"][np.argmax(points)]
     font = pygame.font.Font(None, 50)
     text = f"{winner} wins!"
     text_color = colors[winner]
@@ -197,9 +200,9 @@ def player_selection():
 if __name__ == "__main__":
     show_cover()
     while True:
+        pygame.display.set_mode((screen_x, screen_y))
         game_mode, player_idx = main_menu()
-        
-        env = env(render_mode="god")
+
         agent = PPO(
             env=None,
             observation_space=(3,48,48),
@@ -208,6 +211,6 @@ if __name__ == "__main__":
         )
         agent.model = torch.load("model.pt")
 
-        run(agent, env, player_idx)
+        run(agent, env(render_mode="god"), player_idx)
 
     
